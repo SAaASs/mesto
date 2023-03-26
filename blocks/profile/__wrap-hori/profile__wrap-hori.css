@@ -1,0 +1,5 @@
+.profile__wrap-hori {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
