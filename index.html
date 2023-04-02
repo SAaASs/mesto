@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Научиться учиться</title>
+    <link rel="stylesheet" href="./pages/index.css">
+</head>
+
+<body class="page">
+    <div class="popup">
+        <div class="popup__container">
+            <button type="button" class="popup__close-button"></button>
+            <h2 class="popup__title"></h2>
+            <form name="profile__edit" class="popup__form" id="popupForm">
+                <input name="name_input" class="popup__input" id="popup__name">
+                <input name="work_input" class="popup__input" id="popup__work">
+                <button type="submit" class="popup__save"></button>
+            </form>
+        </div>
+    </div>
+    <div class="full-image-popup">
+        <div class="full-image-popup__img-container">
+            <img id="full-image-popup__img" class="full-image-popup__img" src="">
+            <button type="button" class="full-image-popup__close-button"></button>
+            <p class="full-image-popup__img-name"></p>
+        </div>
+    </div>
+    <header class="header">
+        <img alt="Место Россия" class="header__logo" src="./images/Vector.png">
+    </header>
+    <main class="main">
+        <section class="profile">
+            <div class="profile__info">
+                <img alt="Жак-Ив Кусто" src="./images/image.jpg" class="profile__avatar">
+                <div class="profile__wrap-vert">
+                    <div class="profile__wrap-hori">
+                        <h1 class="profile__name" id="profile__name">Жак-Ив Кусто</h1>
+                        <button type="button" class="profile__edit-button"></button>
+                    </div>
+                    <p class="profile__work" id="profile__work">Исследователь океана</p>
+                </div>
+            </div>
+            <button type="button" class="profile__add-button"></button>
+        </section>
+        <section class="elements">
+            <template id="element">
+                <div class="element">
+                    <button type="button" class="element__delete"></button>
+                    <img alt="Карачаевск" class="element__image" src="">
+                    <div class="element__bottom">
+                        <h2 class="element__bottom-text"></h2>
+                        <button type="button" class="element__bottom-like"></button>
+                    </div>
+                </div>
+            </template>
+        </section>
+    </main>
+    <footer class="footer">
+        <p class="footer__text">© 2020 Mesto Russia</p>
+    </footer>
+    <script src="./scripts/script.js"></script>
+</body>
+
+</html>
