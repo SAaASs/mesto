@@ -105,9 +105,8 @@ function openPopup(targetPopup) {
 }
 function closeByEsc(e) {
   if (e.key === "Escape") {
-    closePopup(imgPopup);
-    closePopup(popupEdit);
-    closePopup(popupAdd);
+    const popup = document.querySelector(".popup_opened")
+    closePopup(popup);
   }
 }
 function openEditProfilePopup() {
