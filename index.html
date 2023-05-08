@@ -14,7 +14,7 @@
             <button id="popupEditCloseButton" type="button" class="popup__close-button"></button>
             <h2 class="popup__title">Редактировать профиль</h2>
             <form name="profileEditForm" class="popup__form" id="profileEditForm">
-                <fieldset class="popup__fields">
+                <fieldset id="editFields" class="popup__fields">
                     <div  class="popup__input-container">
                         <input name="name_input" class="popup__input" id="popupName" novalidate minlength="2" maxlength="40" required>
                         <span class="popupName-error popup__error"></span>
@@ -33,7 +33,7 @@
             <button id="popupAddCloseButton" type="button" class="popup__close-button"></button>
             <h2 class="popup__title">Новое Место</h2>
             <form name="profileAddForm" class="popup__form" id="profileAddForm">
-                <fieldset class="popup__fields">
+                <fieldset id="addFields" class="popup__fields">
                     <div class="popup__input-container">
                         <input name="newPlaceName" placeholder="Название" class="popup__input popup__input_add" id="newPlaceName" novalidate minlength="2" maxlength="40" required>
                         <span class="newPlaceName-error popup__error"></span>
@@ -87,7 +87,6 @@
     <footer class="footer">
         <p class="footer__text">© 2020 Mesto Russia</p>
     </footer>
-
     <script type="module" src="./scripts/index.js"></script>
     
 </body>
