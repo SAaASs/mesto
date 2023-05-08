@@ -1,20 +1,10 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
 export class FormValidator {
-  constructor(validationParameters, formElementSelector) {
+  constructor(validationParameters, formElement) {
     this._validationParameters = validationParameters
-    this._formElement = formElementSelector
+    this._formElement = formElement
+    this._fieldset = document.querySelector(this._validationParameters.fieldId)
+    this._inputList = Array.from(this._fieldset.querySelectorAll(this._validationParameters.inputSelector));
+    this._buttonElement = this._fieldset.querySelector(this._validationParameters.submitButtonSelector);
   }
   _showInputError(formElement, inputElement, errorMessage, validationParameters) {
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
@@ -36,31 +26,28 @@ export class FormValidator {
     }
   };
   _setEventListeners(formElement,validationParameters) {
-    const inputList = Array.from(formElement.querySelectorAll(validationParameters.inputSelector));
-    const buttonElement = formElement.querySelector(validationParameters.submitButtonSelector);
-  
     // чтобы проверить состояние кнопки в самом начале
-    this._toggleButtonState(inputList, buttonElement, validationParameters.inactiveButtonClass);
+    this._toggleButtonState(this._inputList, this._buttonElement, validationParameters.inactiveButtonClass);
     const currentContext = this
-    inputList.forEach((inputElement) => {
+    this._inputList.forEach((inputElement) => {
       inputElement.addEventListener('input', function () {
+        console.log(this) //Без currentContext эта функция не будет работать, ибо внутри текущей функции this ссылается на input, а не на объект
+        console.log(currentContext)
         currentContext._checkInputValidity(formElement, inputElement, validationParameters);
         // чтобы проверять его при изменении любого из полей
-        currentContext._toggleButtonState(inputList, buttonElement, validationParameters.inactiveButtonClass);
+        currentContext._toggleButtonState(currentContext._inputList, currentContext._buttonElement, validationParameters.inactiveButtonClass);
       });
     });
   };
   enableValidation() {
-    const formList = Array.from(document.querySelectorAll(this._formElement));
+    const formList = Array.from(this._formElement);
     formList.forEach((formElement) => {
       formElement.addEventListener('submit', function (evt) {
         evt.preventDefault();
       });
-      const fieldsetList = Array.from(formElement.querySelectorAll('.popup__fields'));
+      const fieldset = document.querySelector(this._validationParameters.fieldId)
   
-      fieldsetList.forEach((fieldSet) => {
-        this._setEventListeners(fieldSet, this._validationParameters);
-      });
+      this._setEventListeners(fieldset, this._validationParameters);
   
     });
   };
@@ -77,20 +64,3 @@ export class FormValidator {
   }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
