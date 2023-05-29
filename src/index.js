@@ -110,14 +110,14 @@ mainSection.addItem(mainSection._renderer(mainSection._items))
 
 const profilePopup = new PopupWithForm("#popupEdit", function (e){
   e.preventDefault()
-  profileName.textContent = profilePopup._getInputValues()[0]
-  profileWork.textContent = profilePopup._getInputValues()[1]
+  profileName.textContent = profilePopup._getInputValues().name_input
+  profileWork.textContent = profilePopup._getInputValues().work_input
   profilePopup._closePopup()
 })
 profilePopup.setEventListeners()
 const addPopup = new PopupWithForm("#popupAdd", function (e){
   e.preventDefault()
-  mainSection.addItem(mainSection._renderer([{name: addPopup._getInputValues()[0], link: addPopup._getInputValues()[1]}]))
+  mainSection.addItem(mainSection._renderer([{name: addPopup._getInputValues().newPlaceName, link: addPopup._getInputValues().newPlaceImgLink}]))
   addPopup._closePopup()
 })
 addPopup.setEventListeners()

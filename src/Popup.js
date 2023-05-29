@@ -48,11 +48,11 @@ export class PopupWithForm extends Popup{
         this._inputsMass = this._selector.querySelectorAll(".popup__input")
     }
     _getInputValues = () => {
-        let dataMass = []
+        this._formValues = {};
         for(let i=0;i<this._inputsMass.length;i++) {
-            dataMass.push(this._inputsMass[i].value)
+            this._formValues[this._inputsMass[i].name] = this._inputsMass[i].value
         }
-        return dataMass
+        return this._formValues
     }
     _closePopup () {
         super._closePopup();
