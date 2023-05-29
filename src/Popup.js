@@ -47,8 +47,9 @@ export class PopupWithForm extends Popup{
     }
     _getInputValues = () => {
         let dataMass = []
-        dataMass.push(this._inputsMass[0].value)
-        dataMass.push(this._inputsMass[1].value)
+        for(let i=0;i<this._inputsMass.length;i++) {
+            dataMass.push(this._inputsMass[i].value)
+        }
         return dataMass
     }
     _closePopup = () => {
