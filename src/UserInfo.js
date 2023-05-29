@@ -8,7 +8,7 @@ export class UserInfo{
         return dataMass
     }
     setUserInfo() {
-        this._userName.textContent = this._userName
-        this._userWork.textContent = this._userName
+        this._userName.textContent = document.querySelector("#popupName").value
+        this._userWork.textContent = document.querySelector("#popupWork").value
     }
 }

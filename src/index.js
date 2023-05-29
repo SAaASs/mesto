@@ -7,7 +7,6 @@ import {
 import {
   Card
 } from "./Card.js";
-import {openPopup, closePopup} from './utils.js'
 const initialCards = [{
       name: "Архыз",
       link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg",
@@ -35,66 +34,6 @@ const initialCards = [{
 ];
 
 const elementTemplate = document.querySelector("#element").content;
-const elementsContainer = document.querySelector(".elements");
-
-const popupEditCloseButton = document.querySelector("#popupEditCloseButton");
-const popupAddCloseButton = document.querySelector("#popupAddCloseButton");
-
-
-const popupEdit = document.querySelector("#popupEdit");
-const popupAdd = document.querySelector("#popupAdd");
-
-const cardImg = document.querySelectorAll(".element__image");
-const newPlaceNameInput = document.querySelector("#newPlaceName");
-const newPlaceImgLinkInput = document.querySelector("#newPlaceImgLink");
-
-const editPopUpOverlay = document.querySelector("#popupEdit")
-editPopUpOverlay.addEventListener("mousedown", (evt) => {
-  if (evt.currentTarget === evt.target) {
-      closePopup(popupEdit);
-  }
-})
-const addPopUpOverlay = document.querySelector("#popupAdd")
-addPopUpOverlay.addEventListener("mousedown", (evt) => {
-  if (evt.currentTarget === evt.target) {
-      closePopup(popupAdd);
-  }
-})
-const fullImagePopUpOverlay = document.querySelector("#full-image-popup")
-
-
-
-popupEditCloseButton.addEventListener("click", closeEditPopup);
-popupAddCloseButton.addEventListener("click", closeAddPopup);
-
-
-
-
-const imgPopupClose = document.querySelector(".full-image-popup__close-button");
-const imgPopup = document.querySelector("#full-image-popup");
-fullImagePopUpOverlay.addEventListener("mousedown", (evt) => {
-  if (evt.currentTarget === evt.target) {
-      closePopup(imgPopup);
-  }
-})
-imgPopupClose.addEventListener("click", closeImgPopup);
-function closeImgPopup() {
-  closePopup(imgPopup);
-}
-
-
-
-
-
-function closeEditPopup() {
-  closePopup(popupEdit);
-}
-
-function closeAddPopup() {
-  closePopup(popupAdd);
-  newPlaceImgLinkInput.value = "";
-  newPlaceNameInput.value = "";
-}
 
 
 
@@ -102,15 +41,14 @@ function closeAddPopup() {
 
 
 
-function openEditProfilePopup() {
-  openPopup(popupEdit);
-  popupNameInput.value = profileName.textContent;
-  popupWorkInput.value = profileWork.textContent;
-}
 
-function openAddCardPopup() {
-  openPopup(popupAdd);
-}
+
+
+
+
+
+
+
 
 function transitionAfterPageLoad() {
   document.querySelector(".page").classList.remove("no-transition");
@@ -119,25 +57,7 @@ function transitionAfterPageLoad() {
 (function() {
   transitionAfterPageLoad();
 })();
-const popupNameInput = document.querySelector("#popupName");
-const popupWorkInput = document.querySelector("#popupWork");
 
-const editButton = document.querySelector(".profile__edit-button");
-const addButton = document.querySelector(".profile__add-button");
-
-editButton.addEventListener("click", openEditProfilePopup);
-addButton.addEventListener("click", openAddCardPopup);
-
-const profileEditForm = document.querySelector("#profileEditForm");
-
-
-const popupEditSave = document.querySelector("#popupEditSave");
-const popupAddCreate = document.querySelector("#popupAddCreate");
-profileAddForm.addEventListener("submit", function() {
-  popupAddCreate.classList.add("popup__save_disabled")
-})
-const profileName = document.querySelector(".profile__name");
-const profileWork = document.querySelector(".profile__work");
 
 
 
@@ -171,10 +91,13 @@ validatorEditProfile.enableValidation()
 
 const imagePopup = new PopupWithImage("#full-image-popup")
 imagePopup.setEventListeners()
-console.log("> PopupWithImage", imgPopup, PopupWithImage);
 
+//console.log("> imagePopup.getOwnPropertyNames", Object.getOwnPropertyNames(imagePopup), imagePopup.__proto__)
 
-
+const addButton = document.querySelector(".profile__add-button")
+const editButton = document.querySelector(".profile__edit-button")
+const profileName = document.querySelector(".profile__name")
+const profileWork = document.querySelector(".profile__work")
 const mainSection = new Section({items: initialCards, renderer: (itemsToRender) =>{
   const renderedItems = []
   for(let i =0; i<itemsToRender.length;i++){
@@ -198,3 +121,6 @@ const addPopup = new PopupWithForm("#popupAdd", function (e){
   addPopup._closePopup()
 })
 addPopup.setEventListeners()
+
+addButton.addEventListener("click", addPopup._openPopup)
+editButton.addEventListener("click", profilePopup._openPopup)
