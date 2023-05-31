@@ -27,13 +27,13 @@ export class FormValidator {
   };
   _setEventListeners(formElement,validationParameters) {
     // чтобы проверить состояние кнопки в самом начале
-    this._toggleButtonState(this._inputList, this._buttonElement, validationParameters.inactiveButtonClass);
+    this.toggleButtonState(this._inputList, this._buttonElement, validationParameters.inactiveButtonClass);
     const currentContext = this
     this._inputList.forEach((inputElement) => {
       inputElement.addEventListener('input', function () {
         currentContext._checkInputValidity(formElement, inputElement, validationParameters);
         // чтобы проверять его при изменении любого из полей
-        currentContext._toggleButtonState(currentContext._inputList, currentContext._buttonElement, validationParameters.inactiveButtonClass);
+        currentContext.toggleButtonState(currentContext._inputList, currentContext._buttonElement, validationParameters.inactiveButtonClass);
       });
     });
   };
@@ -49,7 +49,7 @@ export class FormValidator {
     return !inputElement.validity.valid;
   });
   };
-  _toggleButtonState(inputList, buttonElement, inactiveButtonClass) {
+  toggleButtonState(inputList, buttonElement, inactiveButtonClass) {
     if (this._hasInvalidInput(inputList)) {
     buttonElement.classList.add(inactiveButtonClass);
     buttonElement.setAttribute("disabled", "disabled")
