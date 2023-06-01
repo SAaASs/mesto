@@ -39,5 +39,3 @@ export const addValidationParametersDict = {
     inputErrorClass: 'popup__input_err',
     errorClass: 'popup__error_visible'
   }
-  export const imgPopupImg = document.querySelector("#full-image-popup__img")
-  export const imgPopupName = document.querySelector(".full-image-popup__img-name")
