@@ -3,7 +3,6 @@ export class Popup {
         this._selector = document.querySelector(selector)
     }
     openPopup (){
-        console.log(this)
         this._selector.classList.add("popup_opened")
         document.addEventListener("keydown",this._handleEscClose)
     }

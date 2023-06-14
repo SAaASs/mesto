@@ -31,11 +31,19 @@ export const addValidationParametersDict = {
     inputErrorClass: 'popup__input_err',
     errorClass: 'popup__error_visible'
   }
-  export const editValidationParametersDict = {
+export const editValidationParametersDict = {
     formSelector: '.popup__form',
     inputSelector: '.popup__input',
     submitButtonSelector: '.popup__save',
     inactiveButtonClass: 'popup__save_disabled',
     inputErrorClass: 'popup__input_err',
     errorClass: 'popup__error_visible'
-  }
+}
+export const changeAvatarValidationParametersDict = {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__save',
+    inactiveButtonClass: 'popup__save_disabled',
+    inputErrorClass: 'popup__input_err',
+    errorClass: 'popup__error_visible'
+}

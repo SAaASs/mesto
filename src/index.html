@@ -8,7 +8,7 @@
 </head>
 
 <body class="page no-transition">
-    <div id="popupEdit" class="popup closePopupClass">
+    <div id="popupEdit" class="popup">
         <div class="popup__container">
             <button id="popupEditCloseButton" type="button" class="popup__close-button"></button>
             <h2 class="popup__title">Редактировать профиль</h2>
@@ -27,7 +27,7 @@
             </form>
         </div>
     </div>
-    <div id="popupAdd" class="popup closePopupClass">
+    <div id="popupAdd" class="popup">
         <div class="popup__container">
             <button id="popupAddCloseButton" type="button" class="popup__close-button"></button>
             <h2 class="popup__title">Новое Место</h2>
@@ -46,11 +46,35 @@
             </form>
         </div>
     </div>
-    <div id="full-image-popup" class="full-image-popup popup full-image-popup_darker closePopupClass">
+    <div id="popupAvatar" class="popup">
+        <div class="popup__container">
+            <button id="popupAddCloseButton" type="button" class="popup__close-button"></button>
+            <h2 class="popup__title">Обновить аватар</h2>
+            <form name="profileAddForm" class="popup__form" id="profileAvatarForm">
+                <fieldset id="addFields" class="popup__fields">
+                    <div class="popup__input-container">
+                        <input name="newPlaceAvatarLink" placeholder="Ссылка на картинку" class="popup__input popup__input_add" id="newPlaceAvatarLink" novalidate type="url" required>
+                        <span class="newPlaceAvatarLink-error popup__error"></span>
+                    </div>
+                    <button type="submit" class="popup__save" id="popupAddCreate">Сохранить</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+    <div id="full-image-popup" class="full-image-popup popup full-image-popup_darker">
         <div class="full-image-popup__img-container">
             <img id="full-image-popup__img" class="full-image-popup__img" alt="Место" src="<%=require('../images/Vector.png')%>"><!-- Путь-затычка, чтобы автотест не ругался -->
             <button type="button" class="popup__close-button"></button>
             <p class="full-image-popup__img-name"></p>
+        </div>
+    </div>
+    <div id="popupDelete" class="popup">
+        <div class="popup__container">
+            <button type="button" class="popup__close-button"></button>
+            <h2 class="popup__title">Вы уверены?</h2>
+            <form class="popup__form popup__form_delete">
+                <button type="submit" class="popup__save" id="popupAddCreate">Да</button>
+            </form>
         </div>
     </div>
     <header class="header">
@@ -59,13 +83,16 @@
     <main class="main">
         <section class="profile">
             <div class="profile__info">
-                <img alt="Жак-Ив Кусто" src="<%=require('../images/image.jpg')%>" class="profile__avatar">
+                <div class="profile__avatar-container">
+                    <button class="profile__avatar-shadow"></button>
+                    <img alt="Жак-Ив Кусто" src="<%=require('../images/image.jpg')%>" class="profile__avatar">
+                </div>
                 <div class="profile__wrap-vert">
                     <div class="profile__wrap-hori">
-                        <h1 class="profile__name" id="profile__name">Жак-Ив Кусто</h1>
+                        <h1 class="profile__name" id="profile__name"></h1>
                         <button type="button" data-id="popupEdit" class="profile__edit-button"></button>
                     </div>
-                    <p class="profile__work" id="profile__work">Исследователь океана</p>
+                    <p class="profile__work" id="profile__work"></p>
                 </div>
             </div>
             <button type="button" data-id="popupAdd" class="profile__add-button"></button>
@@ -73,11 +100,14 @@
         <section class="elements">
             <template id="element">
                 <div class="element">
-                    <button type="button" class="element__delete"></button>
+                    <button data-id="" type="button" class="element__delete"></button>
                     <img alt="Карачаевск" class="element__image" src="./images/Close Icon.svg"><!-- Путь-затычка, чтобы автотест не ругался -->
                     <div class="element__bottom">
                         <h2 class="element__bottom-text"></h2>
-                        <button type="button" data-id="full-image-popup" class="element__bottom-like"></button>
+                        <div class="element__bottom-like-container">
+                            <button type="button" data-id="full-image-popup" class="element__bottom-like"></button>
+                            <div class="element__bottom-like-counter">0</div>
+                        </div>
                     </div>
                 </div>
             </template>
