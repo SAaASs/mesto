@@ -1,6 +1,8 @@
 
 export class API {
-    constructor(setProfile, cardClass, cardTemplate, cardPopup, getNewProfileValues, getNewCardValues, deletePopup) {
+    constructor({baseUrl, headers},setProfile, cardClass, cardTemplate, cardPopup, getNewProfileValues, getNewCardValues, deletePopup, getNewAvatarValue) {
+        this._baseUrl = baseUrl
+        this._headers = headers
         this.setProfile = setProfile
         this.cardClass = cardClass
         this.cardTemplate = cardTemplate
@@ -10,130 +12,63 @@ export class API {
         this.deletePopup = deletePopup
         this.userId = ""
         this.avatar = document.querySelector(".profile__avatar")
+        this.getNewAvatarValue = getNewAvatarValue
     }
     getUser() {
-        fetch('https://mesto.nomoreparties.co/v1/cohort-68/users/me', {
-            headers: {
-                authorization: '051fb33f-0728-4468-b1b3-22d15f3b12d4'
-            }
-            }).then(res => res.json()).then((result) => {
-                this.setProfile(result.name, result.about)
-                this.userId = result._id
-                this.avatar.src = result.avatar
-              }); 
+        return fetch(this._baseUrl+'users/me', {
+            headers: this._headers
+            }).then(res => res.json())
     }
     getCards() {
-        fetch('https://mesto.nomoreparties.co/v1/cohort-68/cards', {
-            headers: {
-                authorization: '051fb33f-0728-4468-b1b3-22d15f3b12d4'
-            }
-            }).then(res => res.json()).then((result) => {
-                const cont =document.querySelector(".elements")
-                cont.innerHTML = ""
-                for(let i =0; i<result.length;i++){
-                    const isIn = (element) => element._id == this.userId
-                    let likeState = ""
-                    if (result[i].likes.some(isIn)) {
-                        likeState = true
-                    }
-                    else {
-                        likeState = false
-                    }
-                    const newCard = new this.cardClass(this.cardTemplate, this.cardPopup.openPopup.bind(this.cardPopup), this.deletePopup.openPopup.bind(this.deletePopup), result[i], this.userId, this, likeState)
-                    cont.prepend(newCard._createElement())
-                }
-              }); 
+        return fetch(this._baseUrl+'cards', {
+            headers: this._headers
+            }).then(res => res.json())
     }
-    updateProfile(target) {
-        const savebtn = target.querySelector(".popup__save")
-        savebtn.textContent = "Сохранение..."
-        fetch('https://mesto.nomoreparties.co/v1/cohort-68/users/me', {
+    updateProfile() {
+        return fetch(this._baseUrl+'users/me', {
             method: 'PATCH',
-            headers: {
-                authorization: '051fb33f-0728-4468-b1b3-22d15f3b12d4',
-                'Content-Type': 'application/json'
-            },
+            headers: this._headers,
             body: JSON.stringify({
                 name: this.getNewProfileValues().name_input,
                 about: this.getNewProfileValues().work_input
             })
-            }).then(()=> {
-                this.getUser()
-                savebtn.textContent = "Сохранить"
-            });
+            }).then(res => res.json())
     }
-    createCard(target) {
-        const savebtn = target.querySelector(".popup__save")
-        savebtn.textContent = "Сохранение..."
-        fetch('https://mesto.nomoreparties.co/v1/cohort-68/cards', {
+    sendCard() {
+        return fetch(this._baseUrl+'cards', {
             method: 'POST',
-            headers: {
-                authorization: '051fb33f-0728-4468-b1b3-22d15f3b12d4',
-                'Content-Type': 'application/json'
-            },
+            headers: this._headers,
             body: JSON.stringify({
                 name: this.getNewCardValues().newPlaceName,
                 link: this.getNewCardValues().newPlaceImgLink
             })
-            }).then(()=> {
-                this.getCards()
-                savebtn.textContent = "Создать"
-            });
+            }).then(res => res.json())
     }
-    deleteCard (cardId, target){
-        const savebtn = target.querySelector(".popup__save")
-        savebtn.textContent = "Сохранение..."
-        const currentContext = this
-        fetch(`https://mesto.nomoreparties.co/v1/cohort-68/cards/${cardId}`, {
+    deleteCard (cardId){
+        return fetch(this._baseUrl+`cards/${cardId}`, {
             method: 'DELETE',
-            headers: {
-                authorization: '051fb33f-0728-4468-b1b3-22d15f3b12d4',
-                'Content-Type': 'application/json'
-            },
-            }).then(()=>{
-                currentContext.getCards()
-                savebtn.textContent = "Да"
+            headers: this._headers,
             })
     }
     stealLike (cardId) {
-        const currentContext = this
-        fetch(`https://mesto.nomoreparties.co/v1/cohort-68/cards/${cardId}/likes`, {
+        return fetch(this._baseUrl+`cards/${cardId}/likes`, {
             method: 'DELETE',
-            headers: {
-                authorization: '051fb33f-0728-4468-b1b3-22d15f3b12d4',
-                'Content-Type': 'application/json'
-            },
-            }).then(()=> {
-                currentContext.getCards()
-            });
+            headers: this._headers,
+            })
     }
     giveLike (cardId) {
-        const currentContext = this
-        fetch(`https://mesto.nomoreparties.co/v1/cohort-68/cards/${cardId}/likes`, {
+        return fetch(this._baseUrl+`cards/${cardId}/likes`, {
             method: 'PUT',
-            headers: {
-                authorization: '051fb33f-0728-4468-b1b3-22d15f3b12d4',
-                'Content-Type': 'application/json'
-            },
-            }).then(()=> {
-                currentContext.getCards()
-            });
+            headers: this._headers,
+            })
     }
-    updateAvatar(avatarLink, target) {
-        const savebtn = target.querySelector(".popup__save")
-        savebtn.textContent = "Сохранение..."
-        fetch(`https://mesto.nomoreparties.co/v1/cohort-68/users/me/avatar`, {
+    updateAvatar() {
+        return fetch(this._baseUrl+`users/me/avatar`, {
             method: 'PATCH',
-            headers: {
-                authorization: '051fb33f-0728-4468-b1b3-22d15f3b12d4',
-                'Content-Type': 'application/json'
-            },
+            headers: this._headers,
             body: JSON.stringify({
-                avatar: avatarLink
+                avatar: this.getNewAvatarValue().newPlaceAvatarLink
             })
-            }).then(()=>{
-                this.getUser()
-                savebtn.textContent = "Сохранить"
-            })
+            }).then(res => res.json())
         }
 }

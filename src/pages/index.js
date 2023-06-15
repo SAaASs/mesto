@@ -10,6 +10,7 @@ import { API } from '../components/API';
 import { DeletePopup } from '../components/deletePopup';
 import { Popup } from '../components/Popup';
 import { changeAvatarValidationParametersDict } from '../utils/constants';
+import { Section } from '../components/Section';
 
 const elementTemplate = document.querySelector("#element").content;
 function transitionAfterPageLoad() {
@@ -21,7 +22,9 @@ function transitionAfterPageLoad() {
 })();
 
 
-
+function getCards(cardTemplate, cardOpener, cardDeleter) {
+  console.log(11)
+}
 
 
 const popupDeleteForm = document.querySelector(".popup__form_delete")
@@ -38,39 +41,45 @@ const validatorChangeAvatar = new FormValidator(changeAvatarValidationParameters
 validatorChangeAvatar.enableValidation()
 const deletePopup = new DeletePopup("#popupDelete", function(e) {
   e.preventDefault()
-  api.deleteCard(this._targetCardId, e.target)
-  this.closePopup()
+  const savebtn = e.target.querySelector(".popup__save")
+  savebtn.textContent = "Сохранение..."
+  api.deleteCard(this._targetCardId).then(()=>{api.getCards().then((result)=>{mainSection.renderCards(result)})}).then(savebtn.textContent = "Да").then(this.closePopup())
 })
 deletePopup.setEventListeners()
 popupDeleteForm.addEventListener('submit', deletePopup.submitter.bind(deletePopup))
 const imagePopup = new PopupWithImage("#full-image-popup")
 imagePopup.setEventListeners()
 
-//console.log("> imagePopup.getOwnPropertyNames", Object.getOwnPropertyNames(imagePopup), imagePopup.__proto__)
+
 
 const addButton = document.querySelector(".profile__add-button")
 const editButton = document.querySelector(".profile__edit-button")
 
-const profileInfo = new UserInfo({userName: "#profile__name", userWork:"#profile__work"})
+const profileInfo = new UserInfo({userName: "#profile__name", userWork:"#profile__work", userAvatar: ".profile__avatar"})
 const profilePopup = new PopupWithForm("#popupEdit", function (e){
-  api.updateProfile(e.target)
-  profilePopup.closePopup()
+  const savebtn = e.target.querySelector(".popup__save")
+  savebtn.textContent = "Сохранение..."
+  api.updateProfile().then((result)=>{mainSection.renderUser(result)}).then(profilePopup.closePopup()).finally(savebtn.textContent="Сохранить")
+  
 })
+
+
+
+
+
 profilePopup.setEventListeners()
 const addPopup = new PopupWithForm("#popupAdd", function (e){
-  api.createCard(e.target)
-  addPopup.closePopup()
+  const savebtn = e.target.querySelector(".popup__save")
+  savebtn.textContent = "Сохранение..."
+  api.sendCard().then((result)=> {api.getCards().then((result)=>{mainSection.renderCards(result)})}).then(addPopup.closePopup()).finally(savebtn.textContent = "Создать")
+  
 })
-const AvatarPopupLink = document.querySelector("#newPlaceAvatarLink")
-const AvatarPopup = new PopupWithForm("#popupAvatar", function(e) {
-  api.updateAvatar(AvatarPopupLink.value, e.target)
-  AvatarPopup.closePopup()
-})
+
 addPopup.setEventListeners()
 const popupName = document.querySelector("#popupName")
 const popupWork = document.querySelector("#popupWork")
 addButton.addEventListener("click", function(){
-  addPopup.openPopup.call(addPopup)
+  addPopup.openPopup.call(addPopup)///////////////
   validatorAddCard.toggleButtonState(validatorAddCard._inputList, validatorAddCard._buttonElement, addValidationParametersDict.inactiveButtonClass);
 })
 
@@ -79,11 +88,18 @@ editButton.addEventListener("click", function(){
   popupName.value = profileInfo.getUserInfo().name
   popupWork.value = profileInfo.getUserInfo().work
 })
-const api = new API(profileInfo.setUserInfo.bind(profileInfo), Card, elementTemplate, imagePopup, profilePopup.getInputValues.bind(profilePopup), addPopup.getInputValues.bind(addPopup), deletePopup)
-api.getUser()
-api.getCards()
+const AvatarPopup = new PopupWithForm("#popupAvatar", function(e) {
+  const savebtn = e.target.querySelector(".popup__save")
+  savebtn.textContent = "Сохранение..."
+  api.updateAvatar().then((result)=>{mainSection.renderUser(result)}).then(AvatarPopup.closePopup()).finally(savebtn.textContent = "Сохранить")
+})
+const api = new API({baseUrl:"https://mesto.nomoreparties.co/v1/cohort-68/", headers: {authorization: '051fb33f-0728-4468-b1b3-22d15f3b12d4', 'Content-Type': 'application/json'}},profileInfo.setUserInfo.bind(profileInfo), Card, elementTemplate, imagePopup, profilePopup.getInputValues.bind(profilePopup), addPopup.getInputValues.bind(addPopup), deletePopup, AvatarPopup.getInputValues.bind(AvatarPopup))
+api.getUser().then((result)=>{mainSection.renderUser(result)})
+
 const avatarEditButton = document.querySelector(".profile__avatar-shadow")
 avatarEditButton.addEventListener("click", function(){
   AvatarPopup.openPopup.call(AvatarPopup)
 })
 AvatarPopup.setEventListeners()
+const mainSection = new Section({items: "initialCards"}, ".elements",profileInfo.setUserInfo.bind(profileInfo), Card, elementTemplate, imagePopup, profilePopup.getInputValues.bind(profilePopup), addPopup.getInputValues.bind(addPopup), deletePopup, api)
+api.getCards().then((result)=>{mainSection.renderCards(result)})

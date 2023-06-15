@@ -1,5 +1,5 @@
 export class Card {
-    constructor(templateSelector, handleCardClick, deletePopup, cardData, owner, api, likeState) {
+    constructor(templateSelector, handleCardClick, deletePopup, cardData, owner, api, likeState, section) {
       this._templateSelector = templateSelector;
       this._handleCardClick = handleCardClick;
       this._deletePopup = deletePopup
@@ -7,6 +7,7 @@ export class Card {
       this._owner = owner
       this._api = api
       this._likeState = likeState
+      this._section = section
     }
     _getCardTemplate() {
       const newElement = this._templateSelector.querySelector(".element").cloneNode(true);
@@ -41,16 +42,14 @@ export class Card {
       return newElement;
     }
     _updateLike(e) {
-      e.target.classList.toggle("element__bottom-like_liked");
       const isIn = (element) => element._id == this._owner
       if (!this._cardData.likes.some(isIn)) {
-        this._api.giveLike(this._cardData._id)
-        this._likeState = true
+        this._api.giveLike(this._cardData._id).then(e.target.classList.toggle("element__bottom-like_liked"))
+        this._section.api.getCards().then((result)=>{this._section.renderCards(result)})
       }
       else {
-        console.log("false")
-        this._api.stealLike(this._cardData._id)
-        this._likeState = false
+        this._api.stealLike(this._cardData._id).then(e.target.classList.toggle("element__bottom-like_liked"))
+        this._section.api.getCards().then((result)=>{this._section.renderCards(result)})
       }
     }
   }
