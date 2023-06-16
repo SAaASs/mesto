@@ -4,10 +4,15 @@ export class DeletePopup extends Popup {
         super(selector)
         this.submitter = submitter
         this._targetCardId =""
+        this._targetCard = ""
     }
     openPopup(e) {
         super.openPopup()
         this._targetCardId = e.target.getAttribute("data-id")
-        console.log(this._targetCardId)
+        this._targetCard = e.target.closest(".element")
+    }
+    setEventListeners() {
+        super.setEventListeners()
+        document.querySelector(".popup__form_delete").addEventListener("submit", this.submitter.bind(this))
     }
 }

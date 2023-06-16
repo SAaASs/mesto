@@ -27,13 +27,13 @@ export class FormValidator {
   };
   _setEventListeners(formElement,validationParameters) {
     // чтобы проверить состояние кнопки в самом начале
-    this.toggleButtonState(this._inputList, this._buttonElement, validationParameters.inactiveButtonClass);
+    this.toggleButtonState();
     const currentContext = this
     this._inputList.forEach((inputElement) => {
       inputElement.addEventListener('input', function () {
         currentContext._checkInputValidity(formElement, inputElement, validationParameters);
         // чтобы проверять его при изменении любого из полей
-        currentContext.toggleButtonState(currentContext._inputList, currentContext._buttonElement, validationParameters.inactiveButtonClass);
+        currentContext.toggleButtonState();
       });
     });
   };
@@ -49,13 +49,13 @@ export class FormValidator {
     return !inputElement.validity.valid;
   });
   };
-  toggleButtonState(inputList, buttonElement, inactiveButtonClass) {
-    if (this._hasInvalidInput(inputList)) {
-    buttonElement.classList.add(inactiveButtonClass);
-    buttonElement.setAttribute("disabled", "disabled")
+  toggleButtonState() {
+    if (this._hasInvalidInput(this._inputList)) {
+    this._buttonElement.classList.add(this._validationParameters.inactiveButtonClass);
+    this._buttonElement.setAttribute("disabled", "disabled")
   } else {
-    buttonElement.classList.remove(inactiveButtonClass);
-    buttonElement.removeAttribute("disabled", "disabled")
+    this._buttonElement.classList.remove(this._validationParameters.inactiveButtonClass);
+    this._buttonElement.removeAttribute("disabled", "disabled")
   }
   }
 }

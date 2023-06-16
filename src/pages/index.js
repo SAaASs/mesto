@@ -27,8 +27,6 @@ function getCards(cardTemplate, cardOpener, cardDeleter) {
 }
 
 
-const popupDeleteForm = document.querySelector(".popup__form_delete")
-
 
 const popupAddForm = document.querySelector("#profileAddForm")
 const popupEditForm = document.querySelector("#profileEditForm")
@@ -43,10 +41,9 @@ const deletePopup = new DeletePopup("#popupDelete", function(e) {
   e.preventDefault()
   const savebtn = e.target.querySelector(".popup__save")
   savebtn.textContent = "Сохранение..."
-  api.deleteCard(this._targetCardId).then(()=>{api.getCards().then((result)=>{mainSection.renderCards(result)})}).then(savebtn.textContent = "Да").then(this.closePopup())
+  api.deleteCard(this._targetCardId).then(this._targetCard.remove()).then(this.closePopup()).finally(savebtn.textContent = "Да")
 })
 deletePopup.setEventListeners()
-popupDeleteForm.addEventListener('submit', deletePopup.submitter.bind(deletePopup))
 const imagePopup = new PopupWithImage("#full-image-popup")
 imagePopup.setEventListeners()
 
@@ -54,13 +51,26 @@ imagePopup.setEventListeners()
 
 const addButton = document.querySelector(".profile__add-button")
 const editButton = document.querySelector(".profile__edit-button")
-
+const avatarEditButton = document.querySelector(".profile__avatar-shadow")
+addButton.addEventListener("click", function(){
+  addPopup.openPopup.call(addPopup)///////////////
+  validatorAddCard.toggleButtonState();
+})
+editButton.addEventListener("click", function(){
+  profilePopup.openPopup.call(profilePopup)
+  popupName.value = profileInfo.getUserInfo().name
+  popupWork.value = profileInfo.getUserInfo().work
+})
+avatarEditButton.addEventListener("click", function(){
+  AvatarPopup.openPopup.call(AvatarPopup)
+  validatorChangeAvatar.toggleButtonState();
+})
 const profileInfo = new UserInfo({userName: "#profile__name", userWork:"#profile__work", userAvatar: ".profile__avatar"})
 const profilePopup = new PopupWithForm("#popupEdit", function (e){
   const savebtn = e.target.querySelector(".popup__save")
   savebtn.textContent = "Сохранение..."
-  api.updateProfile().then((result)=>{mainSection.renderUser(result)}).then(profilePopup.closePopup()).finally(savebtn.textContent="Сохранить")
-  
+  const dataToSend = profilePopup.getInputValues.call(profilePopup)
+  api.updateProfile(dataToSend.name_input, dataToSend.work_input).then((result)=>{profileInfo.renderUser(result)}).then(profilePopup.closePopup()).finally(savebtn.textContent="Сохранить")
 })
 
 
@@ -71,35 +81,48 @@ profilePopup.setEventListeners()
 const addPopup = new PopupWithForm("#popupAdd", function (e){
   const savebtn = e.target.querySelector(".popup__save")
   savebtn.textContent = "Сохранение..."
-  api.sendCard().then((result)=> {api.getCards().then((result)=>{mainSection.renderCards(result)})}).then(addPopup.closePopup()).finally(savebtn.textContent = "Создать")
-  
+  const dataToSend = addPopup.getInputValues.call(addPopup)
+  api.sendCard(dataToSend.newPlaceName, dataToSend.newPlaceImgLink).then((result)=> {mainSection.renderCards([result])}).then(addPopup.closePopup()).finally(savebtn.textContent = "Создать") 
 })
 
 addPopup.setEventListeners()
 const popupName = document.querySelector("#popupName")
 const popupWork = document.querySelector("#popupWork")
-addButton.addEventListener("click", function(){
-  addPopup.openPopup.call(addPopup)///////////////
-  validatorAddCard.toggleButtonState(validatorAddCard._inputList, validatorAddCard._buttonElement, addValidationParametersDict.inactiveButtonClass);
-})
 
-editButton.addEventListener("click", function(){
-  profilePopup.openPopup.call(profilePopup)
-  popupName.value = profileInfo.getUserInfo().name
-  popupWork.value = profileInfo.getUserInfo().work
-})
+
+
 const AvatarPopup = new PopupWithForm("#popupAvatar", function(e) {
   const savebtn = e.target.querySelector(".popup__save")
   savebtn.textContent = "Сохранение..."
-  api.updateAvatar().then((result)=>{mainSection.renderUser(result)}).then(AvatarPopup.closePopup()).finally(savebtn.textContent = "Сохранить")
+  const dataToSend = AvatarPopup.getInputValues.call(AvatarPopup)
+  api.updateAvatar(dataToSend.newPlaceAvatarLink).then((result)=>{profileInfo.renderUser(result)}).then(AvatarPopup.closePopup()).finally(savebtn.textContent = "Сохранить")
 })
 const api = new API({baseUrl:"https://mesto.nomoreparties.co/v1/cohort-68/", headers: {authorization: '051fb33f-0728-4468-b1b3-22d15f3b12d4', 'Content-Type': 'application/json'}},profileInfo.setUserInfo.bind(profileInfo), Card, elementTemplate, imagePopup, profilePopup.getInputValues.bind(profilePopup), addPopup.getInputValues.bind(addPopup), deletePopup, AvatarPopup.getInputValues.bind(AvatarPopup))
-api.getUser().then((result)=>{mainSection.renderUser(result)})
 
-const avatarEditButton = document.querySelector(".profile__avatar-shadow")
-avatarEditButton.addEventListener("click", function(){
-  AvatarPopup.openPopup.call(AvatarPopup)
-})
+
+
 AvatarPopup.setEventListeners()
-const mainSection = new Section({items: "initialCards"}, ".elements",profileInfo.setUserInfo.bind(profileInfo), Card, elementTemplate, imagePopup, profilePopup.getInputValues.bind(profilePopup), addPopup.getInputValues.bind(addPopup), deletePopup, api)
-api.getCards().then((result)=>{mainSection.renderCards(result)})
+const mainSection = new Section({selector: ".elements", renderer: (cardsToRender)=>{const cont = document.querySelector(".elements")
+for(let i =0; i<cardsToRender.length;i++){
+    const isIn = (element) => element._id == profileInfo._userId
+    let likeState = ""
+    if (cardsToRender[i].likes.some(isIn)) {
+        likeState = true
+    }
+    else {
+        likeState = false
+    }
+    const newCard = new Card(elementTemplate, imagePopup.openPopup.bind(imagePopup), deletePopup.openPopup.bind(deletePopup), cardsToRender[i], profileInfo._userId, api, likeState)
+    cont.append(newCard._createElement())
+}}})
+
+
+Promise.all([api.getUser(), api.getCards()])
+// тут деструктурируете ответ от сервера, чтобы было понятнее, что пришло
+  .then(([userData, cards]) => {
+    profileInfo.renderUser(userData),
+    mainSection.renderCards(cards)
+  })
+  .catch(err => {
+    console.log(err)
+  });
