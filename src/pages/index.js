@@ -41,7 +41,7 @@ const deletePopup = new DeletePopup("#popupDelete", function(e) {
   e.preventDefault()
   const savebtn = e.target.querySelector(".popup__save")
   savebtn.textContent = "Сохранение..."
-  api.deleteCard(this._targetCardId).then(this._targetCard.remove()).then(this.closePopup()).finally(savebtn.textContent = "Да")
+  api.deleteCard(this._targetCardId).then(this._targetCard.remove()).then(this.closePopup()).catch(err => {console.log(err)}).finally(savebtn.textContent = "Да")
 })
 deletePopup.setEventListeners()
 const imagePopup = new PopupWithImage("#full-image-popup")
@@ -62,7 +62,7 @@ editButton.addEventListener("click", function(){
   popupWork.value = profileInfo.getUserInfo().work
 })
 avatarEditButton.addEventListener("click", function(){
-  AvatarPopup.openPopup.call(AvatarPopup)
+  avatarPopup.openPopup.call(avatarPopup)
   validatorChangeAvatar.toggleButtonState();
 })
 const profileInfo = new UserInfo({userName: "#profile__name", userWork:"#profile__work", userAvatar: ".profile__avatar"})
@@ -70,7 +70,7 @@ const profilePopup = new PopupWithForm("#popupEdit", function (e){
   const savebtn = e.target.querySelector(".popup__save")
   savebtn.textContent = "Сохранение..."
   const dataToSend = profilePopup.getInputValues.call(profilePopup)
-  api.updateProfile(dataToSend.name_input, dataToSend.work_input).then((result)=>{profileInfo.renderUser(result)}).then(profilePopup.closePopup()).finally(savebtn.textContent="Сохранить")
+  api.updateProfile(dataToSend.name_input, dataToSend.work_input).then((result)=>{profileInfo.renderUser(result)}).then(profilePopup.closePopup()).catch(err => {console.log(err)}).finally(savebtn.textContent="Сохранить")
 })
 
 
@@ -82,7 +82,7 @@ const addPopup = new PopupWithForm("#popupAdd", function (e){
   const savebtn = e.target.querySelector(".popup__save")
   savebtn.textContent = "Сохранение..."
   const dataToSend = addPopup.getInputValues.call(addPopup)
-  api.sendCard(dataToSend.newPlaceName, dataToSend.newPlaceImgLink).then((result)=> {mainSection.renderCards([result])}).then(addPopup.closePopup()).finally(savebtn.textContent = "Создать") 
+  api.sendCard(dataToSend.newPlaceName, dataToSend.newPlaceImgLink).then((result)=> {mainSection.renderCardsPrepend([result])}).then(addPopup.closePopup()).catch(err => {console.log(err)}).finally(savebtn.textContent = "Создать") 
 })
 
 addPopup.setEventListeners()
@@ -91,18 +91,18 @@ const popupWork = document.querySelector("#popupWork")
 
 
 
-const AvatarPopup = new PopupWithForm("#popupAvatar", function(e) {
+const avatarPopup = new PopupWithForm("#popupAvatar", function(e) {
   const savebtn = e.target.querySelector(".popup__save")
   savebtn.textContent = "Сохранение..."
-  const dataToSend = AvatarPopup.getInputValues.call(AvatarPopup)
-  api.updateAvatar(dataToSend.newPlaceAvatarLink).then((result)=>{profileInfo.renderUser(result)}).then(AvatarPopup.closePopup()).finally(savebtn.textContent = "Сохранить")
+  const dataToSend = avatarPopup.getInputValues.call(avatarPopup)
+  api.updateAvatar(dataToSend.newPlaceAvatarLink).then((result)=>{profileInfo.renderUser(result)}).then(avatarPopup.closePopup()).catch(err => {console.log(err)}).finally(savebtn.textContent = "Сохранить")
 })
-const api = new API({baseUrl:"https://mesto.nomoreparties.co/v1/cohort-68/", headers: {authorization: '051fb33f-0728-4468-b1b3-22d15f3b12d4', 'Content-Type': 'application/json'}},profileInfo.setUserInfo.bind(profileInfo), Card, elementTemplate, imagePopup, profilePopup.getInputValues.bind(profilePopup), addPopup.getInputValues.bind(addPopup), deletePopup, AvatarPopup.getInputValues.bind(AvatarPopup))
+const api = new API({baseUrl:"https://mesto.nomoreparties.co/v1/cohort-68/", headers: {authorization: '051fb33f-0728-4468-b1b3-22d15f3b12d4', 'Content-Type': 'application/json'}})
 
 
 
-AvatarPopup.setEventListeners()
-const mainSection = new Section({selector: ".elements", renderer: (cardsToRender)=>{const cont = document.querySelector(".elements")
+avatarPopup.setEventListeners()
+const mainSection = new Section({selector: ".elements", renderer: (cardsToRender)=>{ let elementsToRender = []
 for(let i =0; i<cardsToRender.length;i++){
     const isIn = (element) => element._id == profileInfo._userId
     let likeState = ""
@@ -113,8 +113,8 @@ for(let i =0; i<cardsToRender.length;i++){
         likeState = false
     }
     const newCard = new Card(elementTemplate, imagePopup.openPopup.bind(imagePopup), deletePopup.openPopup.bind(deletePopup), cardsToRender[i], profileInfo._userId, api, likeState)
-    cont.append(newCard._createElement())
-}}})
+    elementsToRender.push(newCard.createElement())
+} return elementsToRender}})
 
 
 Promise.all([api.getUser(), api.getCards()])

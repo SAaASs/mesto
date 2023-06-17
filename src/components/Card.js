@@ -20,7 +20,7 @@ export class Card {
       }
       newElement.querySelector(".element__bottom-like").addEventListener("click", this._updateLike.bind(this));
     }
-    _createElement() {
+    createElement() {
       const newElement = this._getCardTemplate()
       const trashCan = newElement.querySelector(".element__delete")
       if (this._cardData.owner._id != this._owner) {

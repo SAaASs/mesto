@@ -4,6 +4,15 @@ export class Section {
         this._renderer = renderer
     }
     renderCards(result) {
-        this._renderer(result)
+        const elementsToRender = this._renderer(result)
+        for(let i =0; i<elementsToRender.length; i++) {
+            this._selector.append(elementsToRender[i])
+        }
+    }
+    renderCardsPrepend(result){
+        const elementsToRender = this._renderer(result)
+        for(let i =0; i<elementsToRender.length; i++) {
+            this._selector.prepend(elementsToRender[i])
+        }
     }
 }

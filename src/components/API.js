@@ -1,18 +1,8 @@
 
 export class API {
-    constructor({baseUrl, headers},setProfile, cardClass, cardTemplate, cardPopup, getNewProfileValues, getNewCardValues, deletePopup, getNewAvatarValue) {
+    constructor({baseUrl, headers}) {
         this._baseUrl = baseUrl
         this._headers = headers
-        this.setProfile = setProfile
-        this.cardClass = cardClass
-        this.cardTemplate = cardTemplate
-        this.cardPopup = cardPopup
-        this.getNewProfileValues = getNewProfileValues
-        this.getNewCardValues = getNewCardValues
-        this.deletePopup = deletePopup
-        this.userId = ""
-        this.avatar = document.querySelector(".profile__avatar")
-        this.getNewAvatarValue = getNewAvatarValue
     }
     _checkResponse(res) {
         if (res.ok) {
